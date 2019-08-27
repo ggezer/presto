@@ -52,6 +52,9 @@ public class HiveS3Module
             validateEmrFsClass();
             binder.bind(S3ConfigurationUpdater.class).to(EmrFsS3ConfigurationUpdater.class).in(Scopes.SINGLETON);
         }
+        else if (type == S3FileSystemType.CUSTOM) {
+            binder.bind(S3ConfigurationUpdater.class).to(CustomFsS3ConfigurationUpdater.class).in(Scopes.SINGLETON);
+        }
         else {
             throw new RuntimeException("Unknown file system type: " + type);
         }
@@ -78,6 +81,16 @@ public class HiveS3Module
             config.set("fs.s3.impl", EMR_FS_CLASS_NAME);
             config.set("fs.s3a.impl", EMR_FS_CLASS_NAME);
             config.set("fs.s3n.impl", EMR_FS_CLASS_NAME);
+        }
+    }
+
+    public static class CustomFsS3ConfigurationUpdater
+            implements S3ConfigurationUpdater
+    {
+        @Override
+        public void updateConfiguration(Configuration config)
+        {
+            // Leave the configuration as is.
         }
     }
 }
